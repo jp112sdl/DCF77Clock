@@ -1,0 +1,29 @@
+name: Compile Sketch
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile sketch
+        uses: arduino/compile-sketches@v1
+        with:
+          fqbn: arduino:avr:nano
+          sketch-paths: |
+            ./DCF77Clock.ino
+          libraries: |
+            - name: RTClib
+            - name: Adafruit GFX Library
+            - name: Adafruit ST7735 and ST7789 Library
+            - name: Adafruit BusIO
+            - name: U8g2_for_Adafruit_GFX
+            - name: NeoPixelBus by Makuna
+          enable-warnings-report: true
+          verbose: false
