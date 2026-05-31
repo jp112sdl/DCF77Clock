@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="650" viewBox="0 0 1100 650">
+
+  <!-- Background -->
+  <rect width="1100" height="650" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="550" y="38" text-anchor="middle" font-family="'Courier New',monospace" font-size="20" font-weight="bold" fill="#e6edf3">DCF77Clock – Verkabelungsdiagramm</text>
+  <text x="550" y="57" text-anchor="middle" font-family="'Courier New',monospace" font-size="12" fill="#8b949e">Arduino Nano · WS2812B 72 LEDs · DCF77 · Adafruit ST7789 TFT · Status-LED</text>
+
+  <!-- ===== WIRES (drawn behind components) ===== -->
+
+  <!-- W1: DCF77 VCC → Arduino 5V left — RED -->
+  <path d="M250,125 H275 V175 H390" stroke="#ff3333" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W2: DCF77 GND → Arduino GND left y=241 — GRAY -->
+  <path d="M250,155 H295 V241 H390" stroke="#555555" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W3: DCF77 OUT → Arduino D3 y=357 — ORANGE -->
+  <path d="M250,185 H315 V357 H390" stroke="#ff8800" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W4: Status LED(+) → Arduino A3 y=324 — YELLOW-GREEN -->
+  <path d="M250,395 H345 V324 H390" stroke="#88dd22" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W5: Status LED(−) → Arduino GND left y=274 — GRAY -->
+  <path d="M250,445 H365 V274 H390" stroke="#555555" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W6: TFT VCC → Arduino 3.3V (routes above all blocks at y=70) — DARK RED -->
+  <path d="M730,115 V70 H350 V208 H390" stroke="#cc2222" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W7: TFT GND → Arduino GND right y=383 — GRAY -->
+  <path d="M730,148 H625 V383 H590" stroke="#555555" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W8: TFT SCK → Arduino D13 y=340 — PURPLE -->
+  <path d="M730,181 H700 V340 H590" stroke="#9944ff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W9: TFT MOSI → Arduino D11 y=307 — BLUE -->
+  <path d="M730,214 H690 V307 H590" stroke="#4488ff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W10: TFT CS → Arduino D10 y=274 — CYAN -->
+  <path d="M730,247 H680 V274 H590" stroke="#00bbaa" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W11: TFT DC → Arduino D9 y=241 — YELLOW -->
+  <path d="M730,280 H670 V241 H590" stroke="#ddcc00" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W12: TFT RST → Arduino D8 y=208 — GREEN -->
+  <path d="M730,313 H660 V208 H590" stroke="#44cc44" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W_BL: TFT BL tied to VCC (3.3V) — dashed loop at x=715 -->
+  <path d="M730,346 H715 V115 H730" stroke="#cc2222" stroke-width="1.5" fill="none" stroke-dasharray="4,3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W13: WS2812B 5V → Arduino 5V right y=450 — RED -->
+  <path d="M730,450 H590" stroke="#ff3333" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W14: WS2812B GND → Arduino GND right y=416 — GRAY -->
+  <path d="M730,485 H630 V416 H590" stroke="#555555" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- W15: WS2812B DIN → Arduino D6 y=175 — LIME (routes under block at y=570) -->
+  <!-- Crosses W13 at (603,450), W14 at (603,416), W7 at (603,383) — different colors -->
+  <path d="M730,520 V570 H603 V175 H590" stroke="#aaff00" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- ===== ARDUINO UNO ===== -->
+  <rect x="390" y="120" width="200" height="390" rx="8" fill="#162032" stroke="#3d7ab5" stroke-width="2"/>
+  <text x="490" y="145" text-anchor="middle" font-family="'Courier New',monospace" font-size="13" font-weight="bold" fill="#58a6ff">Arduino Nano</text>
+  <line x1="390" y1="158" x2="390" y2="375" stroke="#3d7ab5" stroke-width="1" stroke-dasharray="2,4" opacity="0.4"/>
+  <line x1="590" y1="158" x2="590" y2="462" stroke="#3d7ab5" stroke-width="1" stroke-dasharray="2,4" opacity="0.4"/>
+
+  <!-- Left pins -->
+  <circle cx="390" cy="175" r="4" fill="#ff3333"/>
+  <text x="400" y="179" font-family="'Courier New',monospace" font-size="11" fill="#ff3333">5V</text>
+
+  <circle cx="390" cy="208" r="4" fill="#cc2222"/>
+  <text x="400" y="212" font-family="'Courier New',monospace" font-size="11" fill="#cc6666">3.3V</text>
+
+  <circle cx="390" cy="241" r="4" fill="#666"/>
+  <text x="400" y="245" font-family="'Courier New',monospace" font-size="11" fill="#aaa">GND</text>
+
+  <circle cx="390" cy="274" r="4" fill="#666"/>
+  <text x="400" y="278" font-family="'Courier New',monospace" font-size="11" fill="#aaa">GND</text>
+
+  <circle cx="390" cy="324" r="4" fill="#88dd22"/>
+  <text x="400" y="328" font-family="'Courier New',monospace" font-size="11" fill="#88dd22">A3</text>
+
+  <circle cx="390" cy="357" r="4" fill="#ff8800"/>
+  <text x="400" y="361" font-family="'Courier New',monospace" font-size="11" fill="#ff8800">D3</text>
+
+  <!-- Right pins -->
+  <circle cx="590" cy="175" r="4" fill="#aaff00"/>
+  <text x="580" y="179" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#aaff00">D6</text>
+
+  <circle cx="590" cy="208" r="4" fill="#44cc44"/>
+  <text x="580" y="212" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#44cc44">D8</text>
+
+  <circle cx="590" cy="241" r="4" fill="#ddcc00"/>
+  <text x="580" y="245" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#ddcc00">D9</text>
+
+  <circle cx="590" cy="274" r="4" fill="#00bbaa"/>
+  <text x="580" y="278" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#00bbaa">D10</text>
+
+  <circle cx="590" cy="307" r="4" fill="#4488ff"/>
+  <text x="580" y="311" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#4488ff">D11</text>
+
+  <circle cx="590" cy="340" r="4" fill="#9944ff"/>
+  <text x="580" y="344" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#9944ff">D13</text>
+
+  <circle cx="590" cy="383" r="4" fill="#666"/>
+  <text x="580" y="387" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#aaa">GND</text>
+
+  <circle cx="590" cy="416" r="4" fill="#666"/>
+  <text x="580" y="420" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#aaa">GND</text>
+
+  <circle cx="590" cy="450" r="4" fill="#ff3333"/>
+  <text x="580" y="454" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#ff3333">5V</text>
+
+  <!-- Arduino notes -->
+  <text x="490" y="472" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3d5a80">SPI: MOSI=D11  SCK=D13</text>
+  <text x="490" y="485" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3d5a80">Serial 115200 Baud (USB)</text>
+  <text x="490" y="498" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#3d5a80">RTC_Millis (software)</text>
+
+  <!-- Warning: 5V→3.3V logic level -->
+  <rect x="400" y="514" width="180" height="65" rx="5" fill="#2a0d0d" stroke="#cc3333" stroke-width="1.5"/>
+  <text x="490" y="530" text-anchor="middle" font-family="'Courier New',monospace" font-size="10" font-weight="bold" fill="#ff6666">⚠ 5V MCU → 3.3V Display</text>
+  <text x="490" y="545" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#ff9999">Levelshifter empfohlen!</text>
+  <text x="490" y="558" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#cc7777">SPI-Pins: SCK, MOSI,</text>
+  <text x="490" y="571" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#cc7777">CS, DC, RST</text>
+
+  <!-- ===== DCF77 MODULE ===== -->
+  <rect x="55" y="90" width="195" height="130" rx="6" fill="#0f1a2a" stroke="#5080b0" stroke-width="1.5"/>
+  <text x="152" y="112" text-anchor="middle" font-family="'Courier New',monospace" font-size="13" font-weight="bold" fill="#80b0e0">DCF77 Modul</text>
+  <text x="152" y="128" text-anchor="middle" font-family="'Courier New',monospace" font-size="10" fill="#506070">Pin 3 · INPUT</text>
+
+  <!-- DCF77 right-side pins -->
+  <circle cx="250" cy="125" r="4" fill="#ff3333"/>
+  <text x="240" y="129" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#ff3333">VCC</text>
+
+  <circle cx="250" cy="155" r="4" fill="#666"/>
+  <text x="240" y="159" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#aaa">GND</text>
+
+  <circle cx="250" cy="185" r="4" fill="#ff8800"/>
+  <text x="240" y="189" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#ff8800">OUT</text>
+
+  <!-- DCF77 info -->
+  <text x="68" y="150" font-family="'Courier New',monospace" font-size="9" fill="#4a6a90">3.3V oder 5V Betrieb</text>
+  <text x="68" y="163" font-family="'Courier New',monospace" font-size="9" fill="#4a6a90">Signal oft invertiert</text>
+  <text x="68" y="176" font-family="'Courier New',monospace" font-size="9" fill="#4a6a90">77,5 kHz Zeitzeichen</text>
+  <text x="68" y="189" font-family="'Courier New',monospace" font-size="9" fill="#4a6a90">Frankfurt / Mainflingen</text>
+
+  <!-- ===== STATUS LED ===== -->
+  <rect x="55" y="360" width="195" height="120" rx="6" fill="#1a1508" stroke="#a06020" stroke-width="1.5"/>
+  <text x="152" y="382" text-anchor="middle" font-family="'Courier New',monospace" font-size="13" font-weight="bold" fill="#e09040">DCF-Status LED</text>
+  <text x="152" y="397" text-anchor="middle" font-family="'Courier New',monospace" font-size="10" fill="#806030">A3 · OUTPUT</text>
+
+  <!-- Status LED right-side pins -->
+  <circle cx="250" cy="395" r="4" fill="#88dd22"/>
+  <text x="240" y="399" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#88dd22">(+)</text>
+
+  <circle cx="250" cy="445" r="4" fill="#666"/>
+  <text x="240" y="449" text-anchor="end" font-family="'Courier New',monospace" font-size="11" fill="#aaa">(−)</text>
+
+  <!-- Resistor symbol on (+) line -->
+  <text x="68" y="415" font-family="'Courier New',monospace" font-size="10" fill="#88dd22">~220 Ω</text>
+  <line x1="112" y1="411" x2="118" y2="411" stroke="#88dd22" stroke-width="1.5"/>
+  <rect x="118" y="407" width="28" height="8" rx="2" fill="none" stroke="#88dd22" stroke-width="1.5"/>
+  <line x1="146" y1="411" x2="152" y2="411" stroke="#88dd22" stroke-width="1.5"/>
+
+  <text x="68" y="455" font-family="'Courier New',monospace" font-size="9" fill="#607050">Spiegelt DCF-Signal</text>
+  <text x="68" y="468" font-family="'Courier New',monospace" font-size="9" fill="#607050">sichtbar: 0/1 Bit-Puls</text>
+
+  <!-- ===== TFT ST7789 ===== -->
+  <rect x="730" y="80" width="230" height="308" rx="6" fill="#14142a" stroke="#6060c0" stroke-width="1.5"/>
+  <text x="845" y="102" text-anchor="middle" font-family="'Courier New',monospace" font-size="13" font-weight="bold" fill="#9090e0">Adafruit ST7789 TFT</text>
+  <text x="845" y="117" text-anchor="middle" font-family="'Courier New',monospace" font-size="10" fill="#505080">76×284 px · SPI · Rotation 3</text>
+
+  <!-- TFT left-side pins -->
+  <circle cx="730" cy="115" r="4" fill="#cc2222"/>
+  <text x="740" y="119" font-family="'Courier New',monospace" font-size="11" fill="#cc6666">VCC  (3.3V)</text>
+
+  <circle cx="730" cy="148" r="4" fill="#666"/>
+  <text x="740" y="152" font-family="'Courier New',monospace" font-size="11" fill="#aaa">GND</text>
+
+  <circle cx="730" cy="181" r="4" fill="#9944ff"/>
+  <text x="740" y="185" font-family="'Courier New',monospace" font-size="11" fill="#9944ff">SCK   → D13</text>
+
+  <circle cx="730" cy="214" r="4" fill="#4488ff"/>
+  <text x="740" y="218" font-family="'Courier New',monospace" font-size="11" fill="#4488ff">MOSI  → D11</text>
+
+  <circle cx="730" cy="247" r="4" fill="#00bbaa"/>
+  <text x="740" y="251" font-family="'Courier New',monospace" font-size="11" fill="#00bbaa">CS    → D10</text>
+
+  <circle cx="730" cy="280" r="4" fill="#ddcc00"/>
+  <text x="740" y="284" font-family="'Courier New',monospace" font-size="11" fill="#ddcc00">DC    → D9</text>
+
+  <circle cx="730" cy="313" r="4" fill="#44cc44"/>
+  <text x="740" y="317" font-family="'Courier New',monospace" font-size="11" fill="#44cc44">RST   → D8</text>
+
+  <circle cx="730" cy="346" r="4" fill="#cc2222"/>
+  <text x="740" y="350" font-family="'Courier New',monospace" font-size="11" fill="#cc6666">BL   → 3.3V (=VCC)</text>
+
+  <text x="845" y="382" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#404070">invertDisplay: false · U8g2_for_Adafruit_GFX</text>
+
+  <!-- ===== WS2812B LED STRIP ===== -->
+  <rect x="730" y="415" width="230" height="148" rx="6" fill="#0d1f0d" stroke="#50a030" stroke-width="1.5"/>
+  <text x="845" y="437" text-anchor="middle" font-family="'Courier New',monospace" font-size="13" font-weight="bold" fill="#70d040">WS2812B LED Strip</text>
+  <text x="845" y="452" text-anchor="middle" font-family="'Courier New',monospace" font-size="10" fill="#406030">72 LEDs · NeoGRB · NeoWs2812xMethod</text>
+
+  <!-- WS2812B left-side pins -->
+  <circle cx="730" cy="450" r="4" fill="#ff3333"/>
+  <text x="740" y="454" font-family="'Courier New',monospace" font-size="11" fill="#ff3333">5V</text>
+
+  <circle cx="730" cy="485" r="4" fill="#666"/>
+  <text x="740" y="489" font-family="'Courier New',monospace" font-size="11" fill="#aaa">GND</text>
+
+  <circle cx="730" cy="520" r="4" fill="#aaff00"/>
+  <text x="740" y="524" font-family="'Courier New',monospace" font-size="11" fill="#aaff00">DIN  → D6</text>
+
+  <!-- Warning note -->
+  <rect x="738" y="533" width="214" height="22" rx="3" fill="#2a1a00" stroke="#aa6600" stroke-width="1"/>
+  <text x="845" y="548" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#ffaa33">⚠ Ext. Netzteil bei voller Helligkeit!</text>
+  <text x="845" y="562" text-anchor="middle" font-family="'Courier New',monospace" font-size="9" fill="#607050">72 × 60 mA ≈ 4,3 A max</text>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="55" y="505" width="320" height="128" rx="6" fill="#0d1117" stroke="#30404a" stroke-width="1"/>
+  <text x="215" y="522" text-anchor="middle" font-family="'Courier New',monospace" font-size="11" font-weight="bold" fill="#8b949e">Legende</text>
+
+  <!-- Col 1 -->
+  <line x1="68" y1="535" x2="102" y2="535" stroke="#ff3333" stroke-width="2.5"/>
+  <text x="108" y="539" font-family="'Courier New',monospace" font-size="10" fill="#ccc">5V Versorgung</text>
+
+  <line x1="68" y1="551" x2="102" y2="551" stroke="#cc2222" stroke-width="2.5"/>
+  <text x="108" y="555" font-family="'Courier New',monospace" font-size="10" fill="#ccc">3.3V Versorgung</text>
+
+  <line x1="68" y1="567" x2="102" y2="567" stroke="#555555" stroke-width="2.5"/>
+  <text x="108" y="571" font-family="'Courier New',monospace" font-size="10" fill="#ccc">GND</text>
+
+  <line x1="68" y1="583" x2="102" y2="583" stroke="#ff8800" stroke-width="2.5"/>
+  <text x="108" y="587" font-family="'Courier New',monospace" font-size="10" fill="#ccc">DCF77 Signal → D3</text>
+
+  <line x1="68" y1="599" x2="102" y2="599" stroke="#88dd22" stroke-width="2.5"/>
+  <text x="108" y="603" font-family="'Courier New',monospace" font-size="10" fill="#ccc">Status LED → A3</text>
+
+  <line x1="68" y1="615" x2="102" y2="615" stroke="#aaff00" stroke-width="2.5"/>
+  <text x="108" y="619" font-family="'Courier New',monospace" font-size="10" fill="#ccc">WS2812B DIN → D6</text>
+
+  <!-- Col 2 -->
+  <line x1="198" y1="535" x2="232" y2="535" stroke="#44cc44" stroke-width="2.5"/>
+  <text x="238" y="539" font-family="'Courier New',monospace" font-size="10" fill="#ccc">TFT RST → D8</text>
+
+  <line x1="198" y1="551" x2="232" y2="551" stroke="#ddcc00" stroke-width="2.5"/>
+  <text x="238" y="555" font-family="'Courier New',monospace" font-size="10" fill="#ccc">TFT DC  → D9</text>
+
+  <line x1="198" y1="567" x2="232" y2="567" stroke="#00bbaa" stroke-width="2.5"/>
+  <text x="238" y="571" font-family="'Courier New',monospace" font-size="10" fill="#ccc">TFT CS  → D10</text>
+
+  <line x1="198" y1="583" x2="232" y2="583" stroke="#4488ff" stroke-width="2.5"/>
+  <text x="238" y="587" font-family="'Courier New',monospace" font-size="10" fill="#ccc">TFT MOSI → D11</text>
+
+  <line x1="198" y1="599" x2="232" y2="599" stroke="#9944ff" stroke-width="2.5"/>
+  <text x="238" y="603" font-family="'Courier New',monospace" font-size="10" fill="#ccc">TFT SCK  → D13</text>
+
+  <text x="238" y="619" font-family="'Courier New',monospace" font-size="9" fill="#556677">Kreuzungen = keine Verbindung</text>
+
+</svg>
