@@ -207,13 +207,18 @@ void loop() {
     LOW_Zeit = millis() - LOW_Start;
 
     if (DCF_SYNC == true) {
-      PrintBeschreibung(BIT);
-      ZEIT[BIT] = (BIT_Zeit(LOW_Zeit));
-      setLedRing60Bit(BIT, ZEIT[BIT] == 1);
-      Serial.print(ZEIT[BIT]);
-      if (ZEIT[BIT] > 1) {
-        DCF_SYNC = false;
-        BIT = -1;
+      // Waehrend der Minutenmarke (langer Traeger, LOW_Zeit >= 1700) gibt es
+      // kein eigenes Bit -> nicht dekodieren. Bit 58 wird in NEUMINUTE aus der
+      // Laenge der Minutenmarke rekonstruiert.
+      if (LOW_Zeit < 1700) {
+        PrintBeschreibung(BIT);
+        ZEIT[BIT] = (BIT_Zeit(LOW_Zeit));
+        setLedRing60Bit(BIT, ZEIT[BIT] == 1);
+        Serial.print(ZEIT[BIT]);
+        if (ZEIT[BIT] > 1) {
+          DCF_SYNC = false;
+          BIT = -1;
+        }
       }
     } else {
       Serial.print(".");
@@ -269,9 +274,17 @@ void NEUMINUTE(unsigned long LOW_Zeit) {
 
   // Fehlende 59. Sekundenmarke (langes LOW) -> neue Minute beginnt.
   BIT = 0;
+  DCF_SYNC = true;
+
+  // Bit 58 (Datums-Paritaet) ist nicht als eigener Impuls messbar, da seine
+  // Traegerphase direkt in die Minutenmarke uebergeht. Ihre Laenge kodiert es:
+  // ~1900 ms = 0, ~1800 ms = 1.
+  ZEIT[58] = (LOW_Zeit <= 1860) ? 1 : 0;
+
+  // Sekunde 58 (korrekt eingefaerbt) und 59 (Minutenmarke) jetzt anzeigen.
+  setLedRing60Bit(58, ZEIT[58] == 1);
   setLedRing60Bit(59, 0);
   strip.Show();
-  DCF_SYNC = true;
 
   uint8_t ZEIT_STUNDE = bcdDecode(29, 6);
   uint8_t ZEIT_MINUTE = bcdDecode(21, 7);
@@ -281,7 +294,7 @@ void NEUMINUTE(unsigned long LOW_Zeit) {
   uint8_t ZEIT_WOCHENTAG = bcdDecode(42, 3);
   bool PAR_STUNDE = ZEIT[35] & 1;
   bool PAR_MINUTE = ZEIT[28] & 1;
-  bool PAR_DATUM = ZEIT[58] & 1;
+  bool PAR_DATUM = ZEIT[58];
   uint8_t ZEIT_LEAP = ZEIT[16];
   uint8_t ZEIT_CEST = ZEIT[17];
   uint8_t ZEIT_CET = ZEIT[18];
