@@ -6,8 +6,11 @@ sowie einem NeoPixel-LED-Ring anzeigt.
 ## Funktion
 
 - Liest das DCF77-Empfängersignal an `DCF_PIN` (D3) bit-genau über die
-  Längenmessung der LOW-Phasen (~100 ms = Bit 0, ~200 ms = Bit 1).
-- Erkennt den Minutenwechsel an der fehlenden 59. Sekundenmarke (LOW > 1700 ms).
+  Breite des Absenkimpulses (~100 ms = Bit 0, ~200 ms = Bit 1), gemessen an
+  der fallenden Flanke. Dadurch leuchtet jede Sekunden-LED unmittelbar zu
+  ihrer Sekunde – auch Bit 58 wird regulär erfasst.
+- Erkennt den Minutenwechsel an der fehlenden 59. Sekundenmarke
+  (Trägerphase > 1700 ms).
 - Dekodiert Minute, Stunde, Tag, Wochentag, Monat, Jahr sowie die Status-Bits
   MEZ/MESZ, Schaltsekunde und Rufbit.
 - Prüft die drei DCF77-Paritätsbits (Minute, Stunde, Datum). Nur bei korrekter
