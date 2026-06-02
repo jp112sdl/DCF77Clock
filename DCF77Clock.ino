@@ -36,12 +36,15 @@ NeoPixelBus<NeoGrbFeature, NeoWs2812xMethod> strip(LED_COUNT, LED_PIN);
 
 RTC_Millis rtc;
 
-unsigned long LOW_Start = 0;
-unsigned long LOW_Zeit = 0;
+unsigned long LOW_Start = 0;   // Beginn der aktuellen Traegerphase (LOW)
+unsigned long LOW_Zeit = 0;    // Laenge der zuletzt beendeten Traegerphase
+unsigned long HIGH_Start = 0;  // Beginn des aktuellen Absenkimpulses (HIGH)
+unsigned long HIGH_Zeit = 0;   // Laenge des zuletzt beendeten Absenkimpulses
 
 bool Signal = false;
 bool DCF_SYNC = false;
 bool DCF_SYNC_LAST = false;
+bool LED59_shown = false;
 int8_t BIT = -1;
 uint8_t ZEIT[ZEIT_SIZE];
 
@@ -197,53 +200,68 @@ void setLedRing60Bit(uint8_t bit, bool on) {
 }
 
 void loop() {
-  if (BIT > 60) { DCF_SYNC = false; }
+  if (BIT > 58) { DCF_SYNC = false; }
   setSyncLED();
   uint8_t DCF_SIGNAL = digitalRead(DCF_PIN);
   digitalWrite(STATUS_PIN, DCF_SIGNAL);
 
+  // Steigende Flanke: Beginn eines Absenkimpulses = Ende der Traegerphase.
   if (DCF_SIGNAL == HIGH && Signal == false) {
     Signal = true;
-    LOW_Zeit = millis() - LOW_Start;
+    HIGH_Start = millis();
+    LOW_Zeit = HIGH_Start - LOW_Start;  // Laenge der gerade beendeten Traegerphase
 
-    if (DCF_SYNC == true) {
-      // Waehrend der Minutenmarke (langer Traeger, LOW_Zeit >= 1700) gibt es
-      // kein eigenes Bit -> nicht dekodieren. Bit 58 wird in NEUMINUTE aus der
-      // Laenge der Minutenmarke rekonstruiert.
-      if (LOW_Zeit < 1700) {
-        PrintBeschreibung(BIT);
-        ZEIT[BIT] = (BIT_Zeit(LOW_Zeit));
-        setLedRing60Bit(BIT, ZEIT[BIT] == 1);
-        Serial.print(ZEIT[BIT]);
-        if (ZEIT[BIT] > 1) {
-          DCF_SYNC = false;
-          BIT = -1;
-        }
-      }
+    if (LOW_Zeit >= 1700) {
+      // Lange Traegerphase = fehlende 59. Sekundenmarke -> neue Minute.
+      // Der zuvor empfangene Frame (ZEIT[0..58]) ist jetzt vollstaendig.
+      NEUMINUTE();
+      BIT = 0;
+      DCF_SYNC = true;
+      LED59_shown = false;
+    } else if (DCF_SYNC == true) {
+      BIT++;
     } else {
       Serial.print(".");
-      setLedRing60Bit(0, 0);
     }
-
-    strip.Show();
   }
 
+  // Fallende Flanke: Ende des Absenkimpulses -> Bit aus der Impulsbreite lesen.
   else if (DCF_SIGNAL == LOW && Signal == true) {
     Signal = false;
     LOW_Start = millis();
+    HIGH_Zeit = LOW_Start - HIGH_Start;  // Laenge des Absenkimpulses
 
-    NEUMINUTE(LOW_Zeit);
+    if (DCF_SYNC == true && BIT >= 0 && BIT <= 58) {
+      PrintBeschreibung(BIT);
+      ZEIT[BIT] = BIT_Zeit(HIGH_Zeit);
+      setLedRing60Bit(BIT, ZEIT[BIT] == 1);
+      Serial.print(ZEIT[BIT]);
+      if (ZEIT[BIT] > 1) {
+        DCF_SYNC = false;
+        BIT = -1;
+      }
+    }
+    strip.Show();
+  }
+
+  // Sekunde 59 (Minutenmarke) hat keinen Impuls. Damit die LED nicht erst beim
+  // Minutenwechsel erscheint, wird sie nach ~1 s anhaltendem Traeger gesetzt.
+  if (DCF_SYNC == true && BIT == 58 && Signal == false && !LED59_shown
+      && (millis() - LOW_Start) > 1000) {
+    LED59_shown = true;
+    setLedRing60Bit(59, 0);
     strip.Show();
   }
 }
 
-uint8_t BIT_Zeit(unsigned long LOW_Zeit) {
-  if (LOW_Zeit >= 851 && LOW_Zeit <= 960) { return 0; }
-  if (LOW_Zeit >= 750 && LOW_Zeit <= 850) { return 1; }
+// Dekodiert ein Bit aus der Breite des Absenkimpulses: ~100 ms = 0, ~200 ms = 1.
+// Schwellwerte ggf. an den verwendeten Empfaenger anpassen.
+uint8_t BIT_Zeit(unsigned long HIGH_Zeit) {
+  if (HIGH_Zeit >= 50 && HIGH_Zeit <= 150) { return 0; }
+  if (HIGH_Zeit > 150 && HIGH_Zeit <= 300) { return 1; }
   Serial.print("X");
-  Serial.println(LOW_Zeit, DEC);
-  if (LOW_Zeit <= 450) { return 2; }
-  return 3;
+  Serial.println(HIGH_Zeit, DEC);
+  return 3;  // ungueltige Impulsbreite -> Sync verwerfen
 }
 
 // Erwartetes Even-Parity-Bit ueber ZEIT[from..to]:
@@ -266,26 +284,9 @@ uint16_t bcdDecode(uint8_t from, uint8_t count) {
   return value;
 }
 
-void NEUMINUTE(unsigned long LOW_Zeit) {
-  if (LOW_Zeit < 1700) {
-    BIT++;
-    return;
-  }
-
-  // Fehlende 59. Sekundenmarke (langes LOW) -> neue Minute beginnt.
-  BIT = 0;
-  DCF_SYNC = true;
-
-  // Bit 58 (Datums-Paritaet) ist nicht als eigener Impuls messbar, da seine
-  // Traegerphase direkt in die Minutenmarke uebergeht. Ihre Laenge kodiert es:
-  // ~1900 ms = 0, ~1800 ms = 1.
-  ZEIT[58] = (LOW_Zeit <= 1860) ? 1 : 0;
-
-  // Sekunde 58 (korrekt eingefaerbt) und 59 (Minutenmarke) jetzt anzeigen.
-  setLedRing60Bit(58, ZEIT[58] == 1);
-  setLedRing60Bit(59, 0);
-  strip.Show();
-
+// Wird beim Minutenwechsel aufgerufen; ZEIT[0..58] enthaelt den kompletten,
+// gerade abgeschlossenen Frame (inkl. regulaer gemessenem Bit 58).
+void NEUMINUTE() {
   uint8_t ZEIT_STUNDE = bcdDecode(29, 6);
   uint8_t ZEIT_MINUTE = bcdDecode(21, 7);
   uint8_t ZEIT_TAG = bcdDecode(36, 6);
@@ -294,7 +295,7 @@ void NEUMINUTE(unsigned long LOW_Zeit) {
   uint8_t ZEIT_WOCHENTAG = bcdDecode(42, 3);
   bool PAR_STUNDE = ZEIT[35] & 1;
   bool PAR_MINUTE = ZEIT[28] & 1;
-  bool PAR_DATUM = ZEIT[58];
+  bool PAR_DATUM = ZEIT[58] & 1;
   uint8_t ZEIT_LEAP = ZEIT[16];
   uint8_t ZEIT_CEST = ZEIT[17];
   uint8_t ZEIT_CET = ZEIT[18];
