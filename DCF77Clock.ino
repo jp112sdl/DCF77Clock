@@ -118,7 +118,7 @@ void setLEAPLED(uint8_t on) {
 
 void setDayOfWeekLED(uint8_t dayOfWeek) {
   for (uint8_t d = 0; d < 8; d++) {
-    setOnOffLED(LED_DOW_START + d, dayOfWeek == d, RgbColor(colorSaturation, colorSaturation, 0));
+    setOnOffLED(LED_DOW_START + d, dayOfWeek - 1  == d, RgbColor(colorSaturation, colorSaturation, 0));
   }
 }
 
