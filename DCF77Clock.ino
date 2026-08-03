@@ -48,6 +48,10 @@ bool LED59_shown = false;
 int8_t BIT = -1;
 uint8_t ZEIT[ZEIT_SIZE];
 
+bool TIME_VALID = false;             // true, sobald einmal erfolgreich synchronisiert
+uint8_t SHOWN_MINUTE = 0xFF;         // zuletzt auf dem TFT dargestellte Minute
+unsigned long lastDisplayCheck = 0;  // Drossel fuer updateDisplay()
+
 
 void setup() {
   Serial.begin(115200);
@@ -103,6 +107,15 @@ void setSyncLED() {
   if (DCF_SYNC != DCF_SYNC_LAST) {
     DCF_SYNC_LAST = DCF_SYNC;
     strip.SetPixelColor(LED_SYNC, DCF_SYNC ? RgbColor(0, colorSaturation, 0) : RgbColor(colorSaturation, 0, 0));
+
+    // Beim Sync-Verlust den Sekundenring loeschen. Solange kein Sync besteht,
+    // schreibt niemand mehr LED 0..59 - der Ring bliebe sonst dauerhaft hell
+    // stehen. Die zusaetzliche Last/Stoerstrahlung verhindert dann, dass die
+    // Minutenmarke wieder sauber erkannt wird: Der Sync kaeme nie zurueck.
+    if (DCF_SYNC == false) {
+      for (uint8_t i = 0; i < LED_RING; i++) strip.SetPixelColor(i, RgbColor(0, 0, 0));
+    }
+
     strip.Show();
   }
 }
@@ -254,6 +267,8 @@ void loop() {
     setLedRing60Bit(59, 0);
     strip.Show();
   }
+
+  updateDisplay();
 }
 
 // Dekodiert ein Bit aus der Breite des Absenkimpulses: ~100 ms = 0, ~200 ms = 1.
@@ -306,6 +321,12 @@ void NEUMINUTE() {
   uint8_t PAR_ZEIT_STUNDE = expectedParity(29, 34);
   uint8_t PAR_ZEIT_DATUM = expectedParity(36, 57);
 
+  // Rahmen-Plausibilitaet: Bit 0 ist immer 0, Bit 20 immer 1. Faellt ein
+  // Impuls aus, wird die Traegerluecke ~1900 ms lang und faelschlich als
+  // Minutenmarke erkannt - der Frame ist dann verschoben und faellt hier auf.
+  if (ZEIT[0] != 0) return;
+  if (ZEIT[20] != 1) return;
+
   // Nur uebernehmen, wenn alle Paritaeten stimmen ...
   if (PAR_ZEIT_MINUTE != PAR_MINUTE) return;
   if (PAR_ZEIT_STUNDE != PAR_STUNDE) return;
@@ -323,12 +344,28 @@ void NEUMINUTE() {
   setCETLED(ZEIT_CET);
   setLEAPLED(ZEIT_LEAP);
   rtc.adjust(DateTime(ZEIT_JAHR, ZEIT_MONAT, ZEIT_TAG, ZEIT_STUNDE, ZEIT_MINUTE, 0));
+  TIME_VALID = true;
+  // Gezeichnet wird in updateDisplay(); das laeuft auch ohne Empfang weiter.
+}
+
+// Zeichnet Datum und Uhrzeit aus der Software-RTC. Laeuft unabhaengig vom
+// DCF77-Empfang, damit die Anzeige bei gestoertem Signal weiterlaeuft statt
+// auf dem letzten erfolgreich dekodierten Frame stehen zu bleiben.
+// Neu gezeichnet wird nur beim Minutenwechsel.
+void updateDisplay() {
+  if (TIME_VALID == false) return;
+
+  // Nur ~4x pro Sekunde pruefen. rtc.now() rechnet mehrere Divisionen und
+  // wuerde die Flankenmessung sonst unnoetig verlangsamen.
+  if (millis() - lastDisplayCheck < 250) return;
+  lastDisplayCheck = millis();
 
   DateTime now = rtc.now();
+  if (now.minute() == SHOWN_MINUTE) return;
+  SHOWN_MINUTE = now.minute();
+
   char bufDate[] = "DD.MM.YYYY";
   char bufTime[] = "hh:mm";
-  //Serial.println(now.toString(bufDate));
-  //Serial.println(now.toString(bufTime));
 
   // Alte Anzeige loeschen, damit keine Reste schmalerer Werte stehen bleiben.
   tft.fillScreen(ST77XX_BLACK);

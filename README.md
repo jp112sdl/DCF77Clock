@@ -13,14 +13,20 @@ sowie einem NeoPixel-LED-Ring anzeigt.
   (Trägerphase > 1700 ms).
 - Dekodiert Minute, Stunde, Tag, Wochentag, Monat, Jahr sowie die Status-Bits
   MEZ/MESZ, Schaltsekunde und Rufbit.
-- Prüft die drei DCF77-Paritätsbits (Minute, Stunde, Datum). Nur bei korrekter
-  Parität und Jahr > 2025 wird die Zeit übernommen.
+- Prüft die drei DCF77-Paritätsbits (Minute, Stunde, Datum) sowie die festen
+  Rahmenbits (Bit 0 = 0, Bit 20 = 1). Nur bei korrekter Parität, plausiblen
+  Werten und Jahr > 2025 wird die Zeit übernommen.
 - Hält die Zeit per `RTC_Millis` (Software-RTC) zwischen den Synchronisationen.
+- Löscht den Sekundenring, sobald der Sync verloren geht. Ein dauerhaft hell
+  stehender Ring würde durch Laststrom und Störstrahlung verhindern, dass die
+  Minutenmarke wieder erkannt wird.
 
 ## Anzeige
 
 **TFT (ST7789, 76×284, SPI):** Datum + Uhrzeit, gerendert mit
-`U8g2_for_Adafruit_GFX`. Vor erstem Sync: „Warte auf Uhrzeit".
+`U8g2_for_Adafruit_GFX`. Vor erstem Sync: „Warte auf Uhrzeit". Die Anzeige
+läuft nach dem ersten Sync frei aus der `RTC_Millis` weiter (Neuzeichnen bei
+jedem Minutenwechsel) und bleibt damit auch bei gestörtem Empfang aktuell.
 
 **NeoPixel-Ring (72× WS2812x an D6):**
 
