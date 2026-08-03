@@ -54,6 +54,7 @@ void setup() {
 
   pinMode(DCF_PIN, INPUT);
   pinMode(STATUS_PIN, OUTPUT);
+  digitalWrite(STATUS_PIN, HIGH);
 
   tft.init(76, 284);
   tft.invertDisplay(false);
@@ -89,7 +90,8 @@ void setup() {
 
   rtc.adjust(DateTime(2000, 1, 1, 0, 0, 0));
 
-  Serial.println("Synchronisierung");
+  //Serial.println("Synchronisierung");
+  digitalWrite(STATUS_PIN, LOW);
 }
 
 // Setzt eine LED auf 'color', wenn 'on', sonst aus.
@@ -221,7 +223,7 @@ void loop() {
     } else if (DCF_SYNC == true) {
       BIT++;
     } else {
-      Serial.print(".");
+      //Serial.print(".");
     }
   }
 
@@ -235,7 +237,7 @@ void loop() {
       PrintBeschreibung(BIT);
       ZEIT[BIT] = BIT_Zeit(HIGH_Zeit);
       setLedRing60Bit(BIT, ZEIT[BIT] == 1);
-      Serial.print(ZEIT[BIT]);
+      //Serial.print(ZEIT[BIT]);
       if (ZEIT[BIT] > 1) {
         DCF_SYNC = false;
         BIT = -1;
@@ -259,8 +261,8 @@ void loop() {
 uint8_t BIT_Zeit(unsigned long HIGH_Zeit) {
   if (HIGH_Zeit >= 50 && HIGH_Zeit <= 150) { return 0; }
   if (HIGH_Zeit > 150 && HIGH_Zeit <= 300) { return 1; }
-  Serial.print("X");
-  Serial.println(HIGH_Zeit, DEC);
+  //Serial.print("X");
+  //Serial.println(HIGH_Zeit, DEC);
   return 3;  // ungueltige Impulsbreite -> Sync verwerfen
 }
 
@@ -325,8 +327,8 @@ void NEUMINUTE() {
   DateTime now = rtc.now();
   char bufDate[] = "DD.MM.YYYY";
   char bufTime[] = "hh:mm";
-  Serial.println(now.toString(bufDate));
-  Serial.println(now.toString(bufTime));
+  //Serial.println(now.toString(bufDate));
+  //Serial.println(now.toString(bufTime));
 
   // Alte Anzeige loeschen, damit keine Reste schmalerer Werte stehen bleiben.
   tft.fillScreen(ST77XX_BLACK);
@@ -340,6 +342,7 @@ void NEUMINUTE() {
 }
 
 void PrintBeschreibung(int BitNummer) {
+  /*
   switch (BitNummer) {
     case 0: Serial.println("\n# START MINUTE (IMMER 0)"); break;
     case 1: Serial.println("\n# WETTERDATEN"); break;
@@ -359,4 +362,5 @@ void PrintBeschreibung(int BitNummer) {
     case 50: Serial.println("\n# JAHR"); break;
     case 58: Serial.println("\n# PARITAET DATUM"); break;
   }
+  */
 }
