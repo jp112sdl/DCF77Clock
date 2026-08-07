@@ -206,9 +206,9 @@ void setLedRing60Bit(uint8_t bit, bool on) {
 
 
   if (r == 0 && g == 0 && b == 0) {
-    r = 2;
-    g = 2;
-    b = 2;
+  //  r = 2;
+  //  g = 2;
+  //  b = 2;
   }
 
   strip.SetPixelColor(bit, { r, g, b });
